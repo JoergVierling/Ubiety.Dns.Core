@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.NetworkInformation;
 
+using Ubiety.Dns.Core.Common;
 using Ubiety.Logging.Core;
 
 namespace Ubiety.Dns.Core
@@ -34,6 +35,7 @@ namespace Ubiety.Dns.Core
         private bool _enableCache;
         private int _retries;
         private bool _useRecursion;
+        private bool _useUdp;
 
         private ResolverBuilder()
         {
@@ -174,6 +176,15 @@ namespace Ubiety.Dns.Core
             return this;
         }
 
+
+        public ResolverBuilder UseUdp()
+        {
+            _useUdp = true;
+
+            return this;
+        }
+
+
         /// <summary>
         ///     Build the resolver instance with options provided.
         /// </summary>
@@ -200,7 +211,7 @@ namespace Ubiety.Dns.Core
                 _retries = 1;
             }
 
-            return new Resolver(_dnsServers) { Timeout = _timeout, UseCache = _enableCache, Retries = _retries, Recursion = _useRecursion };
+            return new Resolver(_dnsServers) { Timeout = _timeout, UseCache = _enableCache, Retries = _retries, Recursion = _useRecursion, TransportType = _useUdp ? TransportType.Udp : TransportType.Tcp };
         }
 
         private void AddSystemServers()
